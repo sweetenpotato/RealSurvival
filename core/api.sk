@@ -1,0 +1,78 @@
+# Name : RS_Core_api.sk
+# Author : Sweetenpotato
+# Description : RealSurvival 팩에 필수적인 API
+# Dependencies : Skript 2.5.3
+
+# {RS::api::inv::click} : Inventory click 관련 변수 출력 설정
+# {RS::api::variable} : 변수 조작 관련 설정
+
+# Debugging Log 관련 변수
+on load:
+  if {RS::api::inv::click} is not set:
+    set {RS::api::inv::click} to true
+  if {RS::api::variable} is not set:
+    set {RS::api::variable} to true
+
+# Inventory Click 관련 출력
+on inventory click:
+  if {RS::api::inv::click} is true:
+    if player is op:
+			message "=========================================="
+			message "Time : %now%"
+			message "Event Inventoryaction : %event-Inventoryaction%"
+			message "Name of Event Inventory : %name of event-inventory%"
+			message "Event Slot : %event-slot%"
+			message "Slot Number of Event Slot : %index of event-slot%"
+			message "Event Player : %event-player%"
+			message "Event World : %event-world%"
+			message "Event Clicktype : %event-clicktype%"
+			message "Event Itemtype : %event-itemtype%"
+			message "=========================================="
+
+# Debugging Log 출력 여부 설정
+command /api:
+	trigger:
+		set {RS::api::inv::click} to not {RS::api::inv::click}
+
+# 변수 값 
+command /variable [<text>] [<text>]:
+	trigger:
+    if arg-1 is "get":
+      message "변수 %arg-1% 값 : %{%arg-1%}%"
+    else if arg-1 is "set":
+      set {%arg-1%} to 
+
+
+command /array [<text>]:
+	trigger:
+		message "%arg-1% : %{%arg-1%::*}%"
+
+command /reset:
+	trigger:
+		clear {furnace::pos::*}
+
+# 리스트 중간에 비어있는 공간 삭제하는 함수
+function shrinkList(name:text):
+	set {_i} to 1
+
+	loop {%{_name}%::*}:
+		set {%{_name}%::%{_i}%} to loop-value
+		add 1 to {_i}
+    
+# 두 위치가 같은 위치인지 판단하는 함수
+function isSameLocation(loc1:location, loc2:location) :: boolean:
+	set {_x1} to x loc of {_loc1}
+	set {_y1} to y loc of {_loc1}
+	set {_z1} to z loc of {_loc1}
+	set {_world1} to world of {_loc1}
+
+	set {_x2} to x loc of {_loc2}
+	set {_y2} to y loc of {_loc2}
+	set {_z2} to z loc of {_loc2}
+	set {_world2} to world of {_loc2}
+
+	if {_x1} is {_x2}:
+		if {_y1} is {_y2}:
+			if {_z1} is {_z2}:
+				if {_world1} is {_world2}:
+					return yes
